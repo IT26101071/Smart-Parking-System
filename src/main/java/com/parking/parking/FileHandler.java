@@ -1,4 +1,4 @@
-package VehicleParkingSystem;
+package com.parking.parking;
 
 import java.io.*;
 import java.time.LocalDateTime;
