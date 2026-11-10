@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Parking Management Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+    <style>
+        :root {
+            --main: #1e3a5f;     /* Navy */
+            --accent: #f4b400;   /* Amber */
+        }
+
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+            url('/images/parking-bg2.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Top Right Admin Badge */
+        .admin-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Glassmorphism Main Dashboard Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            color: #1e3a5f;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Quick Navigation Links */
+        .quick-nav a {
+            color: #1e3a5f;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .quick-nav a:hover {
+            color: #f4b400;
+        }
+
+        /* Stat Boxes */
+        .stat-box-total {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            color: white;
+            border-radius: 16px;
+        }
+        .stat-box-free {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: white;
+            border-radius: 16px;
+        }
+
+        /* Slot Status Badges */
+        .slot-booked {
+            background: linear-gradient(135deg, #dc3545, #b02a37) !important;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            transition: transform 0.2s;
+        }
+        .slot-free {
+            background: linear-gradient(135deg, #198754, #157347) !important;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            transition: transform 0.2s;
+        }
+        .slot-booked:hover, .slot-free:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top Header without Solid Navbar -->
+<div class="container-fluid py-3 px-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2">
+            <span class="fw-bold fs-5 text-white tracking-wide">Smart Parking Management System</span>
+        </div>
+
+    </div>
+</div>
+
+<!-- Main Container -->
+<div class="container py-4">
+    <div class="row align-items-center">
+
+        <!-- Left Side Hero Text -->
+        <div class="col-lg-5 mb-4 mb-lg-0 text-center text-lg-start ps-lg-4">
+            <h1 class="display-4 fw-bold text-white mb-2 lh-sm">
+                Smart Parking <br>
+                <span style="color: #f4b400;">Management System</span>
+            </h1>
+            <p class="text-light opacity-85 fs-5 mb-0">Park Smart &bull; Save Time &bull; Drive Happy</p>
+        </div>
+
+        <!-- Right Side Glass Dashboard Card -->
+        <div class="col-lg-7">
+            <div class="glass-card p-4 p-md-5">
+
+                <!-- Card Header Title & Quick Links -->
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle shadow-sm mb-2" style="width: 45px; height: 45px; font-size: 20px;">
+                        🅿️
+                    </div>
+                    <h3 class="fw-bold mb-3 fs-3">Smart Parking Dashboard</h3>
+                    <div class="quick-nav d-flex justify-content-center flex-wrap gap-3">
+                        <a th:href="@{/park}">🚗 Park a vehicle</a>
+                        <span class="text-muted">|</span>
+                        <a th:href="@{/exit}">🚪 Exit a vehicle</a>
+                        <span class="text-muted">|</span>
+                        <a th:href="@{/tickets}">🎫 Active tickets</a>
+                        <span class="text-muted">|</span>
+                        <a th:href="@{/slots}">📊 Sorted slots</a>
+                    </div>
+                </div>
+
+                <hr class="text-muted opacity-25 mb-4">
+
+                <!-- Stats Row (Total Slots vs Free Slots - Dynamic) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="stat-box-total p-3 text-center shadow-sm">
+                            <h6 class="text-uppercase small fw-bold mb-1 opacity-75">Total Slots</h6>
+                            <h2 class="fw-bold display-6 mb-0" th:text="${totalSlots}">10</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-box-free p-3 text-center shadow-sm">
+                            <h6 class="text-uppercase small fw-bold mb-1 opacity-75">Free Slots</h6>
+                            <h2 class="fw-bold display-6 mb-0" th:text="${freeSlots}">8</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parking Slots Status Section (Dynamic Loop) -->
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h6 class="fw-bold text-secondary mb-0">Parking Slots Status</h6>
+                    </div>
+
+                    <!-- 5 slots per row using row-cols-5 and backend allSlots -->
+                    <div class="row row-cols-5 g-2">
+                        <div class="col text-center" th:each="slot : ${allSlots}">
+                            <div class="p-2 shadow-sm"
+                                 th:classappend="${slot.available} ? 'slot-free' : 'slot-booked'">
+                                <div class="fw-bold fs-6" th:text="${slot.slotId}">S1</div>
+                                <div class="small" style="font-size: 0.75rem;"
+                                     th:text="${slot.available} ? 'Free' : 'Booked'">Free</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-center py-3 text-light opacity-75 small mt-4">
+    <span>Intelligent Parking</span> | <span>Better Tomorrow</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
